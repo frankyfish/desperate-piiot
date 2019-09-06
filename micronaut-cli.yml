@@ -1,0 +1,5 @@
+profile: service
+defaultPackage: pi.tracker
+---
+testFramework: junit
+sourceLanguage: java
