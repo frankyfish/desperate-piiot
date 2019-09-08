@@ -27,15 +27,12 @@ public class PahoPiTrackerMqttClient implements PiTrackerMqttClient {
 
     @PostConstruct
     public void initialize() throws MqttException {
-        String brokerAddress = new StringBuilder(brokerUrl)
-                .append(":")
-                .append(brokerPort)
-                .toString();
-        this.mqttClient = new MqttClient(brokerAddress, "my-unique-client-id");
+        String brokerAddress = brokerUrl + ":" + brokerPort;
+        this.mqttClient = new MqttClient(brokerAddress, clientId);
         log.info("Trying to connect to MQTT broker @ {}", brokerAddress);
         mqttClient.connect();
         if (mqttClient.isConnected()) {
-            log.info("Connection to broker established with clientId: {}", clientId);
+            log.debug("Connection to broker established with clientId: {}", clientId);
         }
     }
 

@@ -4,6 +4,6 @@ micronaut:
 
 pi-tracker:
   mqtt:
-    host: tcp://192.168.0.3
-    port: 1883
-    client-id: piTacker
+    host: tcp://${MQTT_HOST:127.0.0.1}
+    port: ${MQTT_PORT:1883}
+    client-id: ${MQTT_CLIENT_ID:piTracker}
