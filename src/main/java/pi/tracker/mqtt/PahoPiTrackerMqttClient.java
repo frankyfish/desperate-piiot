@@ -14,14 +14,18 @@ import javax.inject.Singleton;
 @Singleton
 public class PahoPiTrackerMqttClient implements PiTrackerMqttClient {
 
-    @Value("${pi-tracker.mqtt.host}") //this works only after constructor has been executed
+    //these injections work only after constructor has been executed
+    @Value("${pi-tracker.mqtt.host}")
     private String brokerUrl;
 
-    @Value("${pi-tracker.mqtt.port}") // todo: do really need this?
+    @Value("${pi-tracker.mqtt.port}")
     private int brokerPort;
 
     @Value("${pi-tracker.mqtt.client-id}")
     private String clientId;
+
+    @Value("${pi-tracker.mqtt.topic-prefix}")
+    private String topicPrefix;
 
     private MqttClient mqttClient;
 
@@ -59,6 +63,6 @@ public class PahoPiTrackerMqttClient implements PiTrackerMqttClient {
 
     public void publish(String topic, MqttMessage message) throws MqttException {
         log.trace("Publishing message: {} to topic {}", message, topic);
-        mqttClient.publish(topic, message);
+        mqttClient.publish(topicPrefix + topic, message);
     }
 }

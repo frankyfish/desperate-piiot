@@ -5,5 +5,5 @@ import pi.tracker.service.exceptions.DeliveryException;
 import java.util.Map;
 
 public interface MetricDeliverer {
-    void deliver(Map<String, Integer> sensorData) throws DeliveryException;
+    void deliver(Map.Entry<String, Integer> sensorData) throws DeliveryException;
 }

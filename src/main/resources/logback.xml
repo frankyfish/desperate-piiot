@@ -9,7 +9,27 @@
         </encoder>
     </appender>
 
+    <appender name="FILE-ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>pi-tracker.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>archived_logs/app.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <!-- each archived file, size max 10MB -->
+            <maxFileSize>10MB</maxFileSize>
+            <!-- total size of all archive files, if total size > 20GB, it will delete old archived file -->
+            <totalSizeCap>10GB</totalSizeCap>
+            <!-- 60 days to keep -->
+            <maxHistory>10</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d %p %c{1.} [%t] %m%n</pattern>
+        </encoder>
+    </appender>
+
+<!--    <root level="trace">-->
+<!--        <appender-ref ref="STDOUT" />-->
+<!--    </root>-->
+
     <root level="trace">
-        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE-ROLLING" />
     </root>
 </configuration>

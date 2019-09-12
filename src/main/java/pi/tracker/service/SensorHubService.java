@@ -7,12 +7,14 @@ import lombok.extern.slf4j.Slf4j;
 import pi.tracker.dockerpi.I2CConnector;
 import pi.tracker.dockerpi.Sensor;
 import pi.tracker.dockerpi.SensorHub;
+import pi.tracker.dockerpi.exceptions.SensorException;
 import pi.tracker.service.exceptions.DeliveryException;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,28 +42,29 @@ public class SensorHubService {
 
     public void serve() {
         log.debug("Starting to serve sensors...");
-        availableSensors.stream()
-                .map(sensor -> {
-                    Integer metric = null;
-                    try {
-                        metric = sensor.read(this.device, this.console);
-                    } catch (IOException e) {
-                        log.error("Failed to read data from sensor: {}", sensor.getSensorName());
-                    }
-                    return Collections.singletonMap(sensor.getSensorName(), metric);
-                })
-                .forEach(sensorData -> {
-                    try {
-                        publish(sensorData);
-                    } catch (DeliveryException e) {
-                        log.error("Data delivery failed, skipping...");
-                    }
-                });
+        Map<String, Integer> metrics = new HashMap<>(availableSensors.size());
+        for (Sensor sensor : availableSensors) {
+            try {
+                metrics.put(sensor.getSensorName(), sensor.read(this.device, this.console));
+            } catch (SensorException se) {
+                log.error("Got error from {} sensor, error:", se.getSensorName(), se);
+            } catch (IOException e) {
+                log.error("Failed to read data from sensor: {}", sensor.getSensorName());
+            }
+        }
+
+        try {
+            publish(metrics);
+        } catch (DeliveryException e) {
+            log.error("Data delivery failed, skipping...");
+        }
     }
-    //todo: mb rename this method?
+
     private void publish(Map<String, Integer> sensorData) throws DeliveryException {
         log.debug("Publishing sensor");
-        deliverer.deliver(sensorData);
+        for (Map.Entry<String, Integer> sensorMetric : sensorData.entrySet()) {
+            deliverer.deliver(sensorMetric);
+        }
     }
 
 }

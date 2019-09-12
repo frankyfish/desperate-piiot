@@ -7,3 +7,5 @@ pi-tracker:
     host: tcp://${MQTT_HOST:127.0.0.1}
     port: ${MQTT_PORT:1883}
     client-id: ${MQTT_CLIENT_ID:piTracker}
+    qos: ${MQTT_QOS:0}
+    topic-prefix: ${MQTT_TOPIC_PREFIX:}

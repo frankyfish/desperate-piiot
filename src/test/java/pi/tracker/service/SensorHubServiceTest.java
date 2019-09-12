@@ -11,6 +11,7 @@ import pi.tracker.dockerpi.SensorHub;
 import pi.tracker.service.exceptions.DeliveryException;
 
 import java.io.IOException;
+import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.Map;
 
@@ -37,7 +38,8 @@ public class SensorHubServiceTest {
         // then metrics from each sensor of the hub are delivered to MQTT broker
         sensorHub.getAvailableSensors().forEach(sensorName -> {
             try {
-                Map<String, Integer> sensorData = Collections.singletonMap(sensorName.getSensorName(), 0);
+//                Map<String, Integer> sensorData = Collections.singletonMap(sensorName.getSensorName(), 0);
+                Map.Entry<String, Integer> sensorData = new AbstractMap.SimpleEntry<>(sensorName.getSensorName(), 0);
                 verify(metricDeliverer, times(1)).deliver(sensorData);
             } catch (DeliveryException e) {
                 e.printStackTrace();

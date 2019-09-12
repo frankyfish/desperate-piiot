@@ -19,8 +19,7 @@ public class HumanSensor implements Sensor {
             log.trace("Successfully retrieved sensor data!");
             metric = 1;
             console.println("Live body detected within 5 seconds!");
-        }
-        else {
+        } else {
             metric = 0;
             console.println("No humans detected!");
         }
