@@ -3,6 +3,7 @@ micronaut:
     name: pi-tracker
 
 pi-tracker:
+  scheduled-mode: ${SCHEDULED_MODE:false}
   mqtt:
     host: tcp://${MQTT_HOST:127.0.0.1}
     port: ${MQTT_PORT:1883}

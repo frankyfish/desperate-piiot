@@ -63,6 +63,6 @@ public class PahoPiTrackerMqttClient implements PiTrackerMqttClient {
 
     public void publish(String topic, MqttMessage message) throws MqttException {
         log.trace("Publishing message: {} to topic {}", message, topic);
-        mqttClient.publish(topicPrefix + topic, message);
+        mqttClient.publish(topicPrefix + topic, message); // todo: mb a better place for adding prefix?!
     }
 }

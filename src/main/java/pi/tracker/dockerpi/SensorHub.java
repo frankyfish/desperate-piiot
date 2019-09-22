@@ -1,9 +1,7 @@
 package pi.tracker.dockerpi;
 
 import lombok.Getter;
-import pi.tracker.dockerpi.impl.sensors.HumanSensor;
-import pi.tracker.dockerpi.impl.sensors.LightSensor;
-import pi.tracker.dockerpi.impl.sensors.TemperatureSensor;
+import pi.tracker.dockerpi.impl.sensors.*;
 
 import javax.inject.Singleton;
 import java.util.Arrays;
@@ -18,7 +16,11 @@ public class SensorHub {
     public SensorHub(){
         availableSensors = Arrays.asList(new TemperatureSensor(),
                 new LightSensor(),
-                new HumanSensor()); //todo: add other sensors
+                new HumanSensor(),
+                new AirPressureTemperatureSensor(),
+                new AirPressureSensor(),
+                new OnboardHumiditySensor(),
+                new OnboardTemperatureSensor());
     }
 
 }

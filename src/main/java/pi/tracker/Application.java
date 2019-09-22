@@ -7,6 +7,9 @@ import pi.tracker.service.SensorHubService;
 @Slf4j
 public class Application {
     public static void main(String[] args) {
-        Micronaut.run(Application.class).getBean(SensorHubService.class).serve();
+        SensorHubService sensorHubService = Micronaut.run(Application.class).getBean(SensorHubService.class);
+        while (true) {
+            sensorHubService.serve();
+        }
     }
 }
