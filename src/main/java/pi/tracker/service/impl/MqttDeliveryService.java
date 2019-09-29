@@ -1,9 +1,9 @@
 package pi.tracker.service.impl;
 
-import io.micronaut.context.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import pi.tracker.config.MqttDeliveryProperties;
 import pi.tracker.mqtt.PiTrackerMqttClient;
 import pi.tracker.service.MetricDeliverer;
 import pi.tracker.service.exceptions.DeliveryException;
@@ -18,13 +18,12 @@ import java.util.Map;
 public class MqttDeliveryService implements MetricDeliverer {
 
     private PiTrackerMqttClient client;
-
-    @Value("${pi-tracker.mqtt.qos}")
-    private int mqttQos;
+    private MqttDeliveryProperties deliveryProperties;
 
     @Inject
-    public MqttDeliveryService(PiTrackerMqttClient mqttClient) {
+    public MqttDeliveryService(PiTrackerMqttClient mqttClient, MqttDeliveryProperties mqttDeliveryProperties) {
         this.client = mqttClient;
+        this.deliveryProperties = mqttDeliveryProperties;
     }
 
     public void deliver(Map<String, Integer> sensorData) throws DeliveryException {
@@ -41,6 +40,7 @@ public class MqttDeliveryService implements MetricDeliverer {
     }
 
     private void publishToBroker(String topic, Integer metricData) throws DeliveryException {
+        String prefixedTopic = formatEnding(deliveryProperties.getTopicPrefix()) + topic;
         if (!client.isConnected()) {
             log.warn("Looks like mqtt connection was lost, performing reconnection.");
             try {
@@ -50,15 +50,24 @@ public class MqttDeliveryService implements MetricDeliverer {
                 throw new DeliveryException(me); // stop execution in case MQTT connection is lost
             }
         }
-        log.trace("Preparing message for broker topic={}, metric value {}", topic, metricData);
+        log.trace("Preparing message for broker topic={}, metric value {}", prefixedTopic, metricData);
 //        MqttMessage mqttMessage = new MqttMessage(new byte[]{metricData.byteValue()});
         MqttMessage mqttMessage = new MqttMessage(ByteBuffer.allocate(8).putInt(metricData).array());
-        mqttMessage.setQos(mqttQos);
+        mqttMessage.setQos(deliveryProperties.getMqttQos());
         try {
-            client.publish(topic, mqttMessage);
+            client.publish(prefixedTopic, mqttMessage);
         } catch (MqttException me) {
-            log.error("Failed to publish message to topic {}, error: ", topic, me);
+            log.error("Failed to publish message to topic {}, error: ", prefixedTopic, me);
         }
+    }
+
+    private String formatEnding(String userDefinedPrefix) {
+        if (!userDefinedPrefix.isBlank()) {
+            if (!userDefinedPrefix.endsWith("/")) {
+                return userDefinedPrefix + "/";
+            }
+        }
+        return userDefinedPrefix;
     }
 
 }

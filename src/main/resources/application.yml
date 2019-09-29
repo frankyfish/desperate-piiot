@@ -3,7 +3,9 @@ micronaut:
     name: pi-tracker
 
 pi-tracker:
-  scheduled-mode: ${SCHEDULED_MODE:false}
+  scheduled-mode:
+    enabled: ${SCHEDULED_MODE:true}
+    cron: ${SCHEDULED_CRON:* * * * *}
   mqtt:
     host: tcp://${MQTT_HOST:127.0.0.1}
     port: ${MQTT_PORT:1883}

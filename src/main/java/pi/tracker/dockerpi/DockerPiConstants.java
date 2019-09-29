@@ -30,6 +30,7 @@ public class DockerPiConstants {
     public static final byte BMP280_PRESSURE_REG_H = (byte) 0X0B;
     // human
     public static final byte HUMAN_DETECT = (byte) 0x0D;
+
     // Sensors names also used as a topics for messages to be pushed to
     public static class SensorNames {
         public static final String TEMPERATURE_SENSOR = "temperature";

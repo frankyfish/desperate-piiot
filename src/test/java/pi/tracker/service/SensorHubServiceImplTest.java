@@ -12,22 +12,21 @@ import pi.tracker.service.exceptions.DeliveryException;
 
 import java.io.IOException;
 import java.util.AbstractMap;
-import java.util.Collections;
 import java.util.Map;
 
 import static org.mockito.Mockito.*;
 
-public class SensorHubServiceTest {
+public class SensorHubServiceImplTest {
 
-    SensorHubService sensorHubService;
-    I2CDevice i2CDevice = new FakeI2CDevice();
-    MetricDeliverer metricDeliverer = mock(MetricDeliverer.class);
-    SensorHub sensorHub = new SensorHub();
+    private SensorHubService sensorHubService;
+    private I2CDevice i2CDevice = new FakeI2CDevice();
+    private MetricDeliverer metricDeliverer = mock(MetricDeliverer.class);
+    private SensorHub sensorHub = new SensorHub();
 
     @BeforeEach
     public void setUp() throws IOException, I2CFactory.UnsupportedBusNumberException {
         I2CConnector connector = new FakeI2CConnector(i2CDevice);
-        this.sensorHubService = new SensorHubService(metricDeliverer, connector, sensorHub);
+        this.sensorHubService = new SensorHubServiceImpl(metricDeliverer, connector, sensorHub);
     }
 
     @Test
@@ -38,7 +37,6 @@ public class SensorHubServiceTest {
         // then metrics from each sensor of the hub are delivered to MQTT broker
         sensorHub.getAvailableSensors().forEach(sensorName -> {
             try {
-//                Map<String, Integer> sensorData = Collections.singletonMap(sensorName.getSensorName(), 0);
                 Map.Entry<String, Integer> sensorData = new AbstractMap.SimpleEntry<>(sensorName.getSensorName(), 0);
                 verify(metricDeliverer, times(1)).deliver(sensorData);
             } catch (DeliveryException e) {

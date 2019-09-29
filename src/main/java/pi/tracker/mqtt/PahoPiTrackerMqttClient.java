@@ -24,9 +24,6 @@ public class PahoPiTrackerMqttClient implements PiTrackerMqttClient {
     @Value("${pi-tracker.mqtt.client-id}")
     private String clientId;
 
-    @Value("${pi-tracker.mqtt.topic-prefix}")
-    private String topicPrefix;
-
     private MqttClient mqttClient;
 
     @PostConstruct
@@ -63,6 +60,6 @@ public class PahoPiTrackerMqttClient implements PiTrackerMqttClient {
 
     public void publish(String topic, MqttMessage message) throws MqttException {
         log.trace("Publishing message: {} to topic {}", message, topic);
-        mqttClient.publish(topicPrefix + topic, message); // todo: mb a better place for adding prefix?!
+        mqttClient.publish(topic, message);
     }
 }
