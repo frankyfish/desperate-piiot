@@ -51,8 +51,7 @@ public class MqttDeliveryService implements MetricDeliverer {
             }
         }
         log.trace("Preparing message for broker topic={}, metric value {}", prefixedTopic, metricData);
-//        MqttMessage mqttMessage = new MqttMessage(new byte[]{metricData.byteValue()});
-        MqttMessage mqttMessage = new MqttMessage(ByteBuffer.allocate(8).putInt(metricData).array());
+        MqttMessage mqttMessage = new MqttMessage(metricData.toString().getBytes());
         mqttMessage.setQos(deliveryProperties.getMqttQos());
         try {
             client.publish(prefixedTopic, mqttMessage);
