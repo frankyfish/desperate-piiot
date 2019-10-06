@@ -1,16 +1,17 @@
 package pi.tracker.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.SerializationUtils;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import pi.tracker.config.MqttDeliveryProperties;
+import pi.tracker.dto.PiSensorHubMetric;
 import pi.tracker.mqtt.PiTrackerMqttClient;
 import pi.tracker.service.MetricDeliverer;
 import pi.tracker.service.exceptions.DeliveryException;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.nio.ByteBuffer;
 import java.util.Map;
 
 @Slf4j
@@ -29,17 +30,37 @@ public class MqttDeliveryService implements MetricDeliverer {
     public void deliver(Map<String, Integer> sensorData) throws DeliveryException {
         log.debug("Starting to deliver sensor data");
         for (Map.Entry<String, Integer> sd : sensorData.entrySet()) {
-            publishToBroker(sd.getKey(), sd.getValue());
+            MqttMessage mqttMessage = new MqttMessage(sd.getValue().toString().getBytes());
+            mqttMessage.setQos(deliveryProperties.getMqttQos());
+            String prefixedTopic = formatEnding(deliveryProperties.getTopicPrefix()) + sd.getKey(); // todo:move to single place of usage
+            prepareAndPublish(prefixedTopic, mqttMessage);
         }
     }
 
     @Override
     public void deliver(Map.Entry<String, Integer> sensorData) throws DeliveryException {
         log.debug("Starting to deliver sensor data");
-        publishToBroker(sensorData.getKey(), sensorData.getValue());
+
+        String prefixedTopic = formatEnding(deliveryProperties.getTopicPrefix()) + sensorData.getKey();
+        log.trace("Preparing message for broker topic={}, metric value {}", prefixedTopic, sensorData.getValue());
+        MqttMessage mqttMessage = new MqttMessage(sensorData.getValue().toString().getBytes());
+        mqttMessage.setQos(deliveryProperties.getMqttQos());
+
+        prepareAndPublish(prefixedTopic, mqttMessage);
     }
 
-    private void publishToBroker(String topic, Integer metricData) throws DeliveryException {
+    @Override
+    public void deliver(PiSensorHubMetric metric) throws DeliveryException {
+        log.debug("Starting to deliver metric");
+
+        MqttMessage mqttMessage = new MqttMessage(SerializationUtils.serialize(metric));
+        mqttMessage.setQos(deliveryProperties.getMqttQos());
+        String prefixedTopic = formatEnding(deliveryProperties.getTopicPrefix()) + deliveryProperties.getTopicForMetric();
+
+        prepareAndPublish(prefixedTopic, mqttMessage);
+    }
+
+    private void prepareAndPublish(String topic, MqttMessage mqttMessage) throws DeliveryException {
         String prefixedTopic = formatEnding(deliveryProperties.getTopicPrefix()) + topic;
         if (!client.isConnected()) {
             log.warn("Looks like mqtt connection was lost, performing reconnection.");
@@ -50,9 +71,6 @@ public class MqttDeliveryService implements MetricDeliverer {
                 throw new DeliveryException(me); // stop execution in case MQTT connection is lost
             }
         }
-        log.trace("Preparing message for broker topic={}, metric value {}", prefixedTopic, metricData);
-        MqttMessage mqttMessage = new MqttMessage(metricData.toString().getBytes());
-        mqttMessage.setQos(deliveryProperties.getMqttQos());
         try {
             client.publish(prefixedTopic, mqttMessage);
         } catch (MqttException me) {

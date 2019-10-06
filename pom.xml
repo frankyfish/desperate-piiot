@@ -15,6 +15,7 @@
         <exec.mainClass>pi.tracker.Application</exec.mainClass>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
+        <lombok-version>1.18.8</lombok-version>
     </properties>
     <repositories>
         <repository>
@@ -101,6 +102,12 @@
             <version>1.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.9</version>
+        </dependency>
+
         <!--   Test   -->
         <!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
         <dependency>
@@ -109,6 +116,7 @@
             <version>1.9.5</version>
             <scope>test</scope>
         </dependency>
+        <!-- TODO: does this one needed? -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -218,11 +226,11 @@
                                 <artifactId>micronaut-validation</artifactId>
                                 <version>${micronaut.version}</version>
                             </path>
-                            <!-- next one is mandatory of javac doesnt see lombok -->
+                            <!-- next one is mandatory: javac doesnt see lombok -->
                             <path>
                                 <groupId>org.projectlombok</groupId>
                                 <artifactId>lombok</artifactId>
-                                <version>1.18.8</version>
+                                <version>${lombok-version}</version>
                             </path>
                         </annotationProcessorPaths>
                     </configuration>
