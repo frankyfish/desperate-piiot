@@ -1,21 +1,27 @@
 package pi.tracker.service.impl;
 
+import io.micronaut.context.annotation.Requires;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SerializationUtils;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import pi.tracker.config.MqttDeliveryProperties;
 import pi.tracker.dto.PiSensorHubMetric;
+import pi.tracker.mqtt.PahoPiTrackerMqttClient;
 import pi.tracker.mqtt.PiTrackerMqttClient;
 import pi.tracker.service.MetricDeliverer;
 import pi.tracker.service.exceptions.DeliveryException;
 
 import javax.inject.Inject;
+import javax.inject.Named;
+
 import javax.inject.Singleton;
 import java.util.Map;
 
 @Slf4j
 @Singleton
+@Named("mqtt")
+@Requires(beans = PahoPiTrackerMqttClient.class)
 public class MqttDeliveryService implements MetricDeliverer {
 
     private PiTrackerMqttClient client;

@@ -5,9 +5,10 @@ micronaut:
 pi-tracker:
   scheduled-mode:
     enabled: ${SCHEDULED_MODE:true}
-    cron: ${SCHEDULED_CRON:* * * * *}
+    cron: ${SCHEDULED_CRON:0 * * * *}
   use-raw-output: ${USE_RAW_OUTPUT:false}
   mqtt:
+    enable: ${MQTT_ENABLED:true}
     host: tcp://${MQTT_HOST:127.0.0.1}
     port: ${MQTT_PORT:1883}
     client-id: ${MQTT_CLIENT_ID:piTracker}
