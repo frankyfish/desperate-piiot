@@ -1,5 +1,7 @@
 package pi.tracker.mqtt;
 
+import io.micronaut.context.annotation.Context;
+import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -12,6 +14,10 @@ import javax.inject.Singleton;
 
 @Slf4j
 @Singleton
+// this allows to create this bean during Micronaut context creation, what makes this bean to intialize earlier
+// than the others
+@Context //FIXME: TBD-0 not sure if this needed if no logic to automatically fallback to local metrics saving is implemented
+@Requires(property = "pi-tracker.mqtt.enable", value = "true")
 public class PahoPiTrackerMqttClient implements PiTrackerMqttClient {
 
     //these injections work only after constructor has been executed

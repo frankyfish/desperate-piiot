@@ -60,7 +60,7 @@ public class SensorHubServiceImpl implements SensorHubService {
     private void serveAsMetric() {
         log.debug("Starting to collect data for metric from sensors...");
 
-        PiSensorHubMetric metric = new PiSensorHubMetric();
+        PiSensorHubMetric metric = PiSensorHubMetric.builder().build();
         metric.setTimeStamp(Timestamp.from(ZonedDateTime.now().toInstant()).toString());
         for (Sensor sensor : availableSensors) {
             String currentSensorName = sensor.getSensorName();
@@ -131,6 +131,7 @@ public class SensorHubServiceImpl implements SensorHubService {
     }
 
     private void publishMetric(PiSensorHubMetric metric) throws DeliveryException {
+        // todo add check on where to publish
         log.debug("Publishing metric {}", metric);
         deliverer.deliver(metric);
     }
