@@ -12,6 +12,9 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.Map;
 
+/**
+ * Used for storing of sensor data locally in the file.
+ */
 @Slf4j
 @Singleton
 @Named("file")

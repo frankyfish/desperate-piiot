@@ -18,14 +18,18 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.Map;
 
+/**
+ * This bean is only initialized in case there is an instance of {@link PahoPiTrackerMqttClient};
+ * otherwise sensor data would be written into local file, see {@link ToFileDeliveryService}
+ */
 @Slf4j
 @Singleton
 @Named("mqtt")
 @Requires(beans = PahoPiTrackerMqttClient.class)
 public class MqttDeliveryService implements MetricDeliverer {
 
-    private PiTrackerMqttClient client;
-    private MqttDeliveryProperties deliveryProperties;
+    private final PiTrackerMqttClient client;
+    private final MqttDeliveryProperties deliveryProperties;
 
     @Inject
     public MqttDeliveryService(PiTrackerMqttClient mqttClient, MqttDeliveryProperties mqttDeliveryProperties) {
