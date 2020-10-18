@@ -31,7 +31,7 @@
     </root>
 
     <!--  uncomment following block to see full log in terminal  -->
-    <root level="trace">
+    <root level="debug">
         <appender-ref ref="STDOUT"/>
     </root>
 

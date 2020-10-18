@@ -2,7 +2,7 @@ package pi.tracker.service.impl;
 
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
-import pi.tracker.dto.PiSensorHubMetric;
+import pi.tracker.dto.DockerPiSensorHubMetric;
 import pi.tracker.service.MetricDeliverer;
 import pi.tracker.service.exceptions.DeliveryException;
 
@@ -30,11 +30,11 @@ public class ToFileDeliveryService implements MetricDeliverer {
     }
 
     @Override
-    public void deliver(PiSensorHubMetric metric) throws DeliveryException {
+    public void deliver(DockerPiSensorHubMetric metric) throws DeliveryException {
         toSaveToFile(serializeToJson(metric));
     }
 
-    private String serializeToJson(PiSensorHubMetric metric) {
+    private String serializeToJson(DockerPiSensorHubMetric metric) {
         return new Gson().toJson(metric);
     }
 
@@ -51,7 +51,6 @@ public class ToFileDeliveryService implements MetricDeliverer {
         } else {
             log.debug("Creating file with metrics: {}", FILE_FULL_PATH);
             try {
-//                Path filePath = Files.createFile(path2File);
                 Writer writer = Files.newBufferedWriter(path2File);
                 writer.append(metricJson).append('\n');
                 writer.close();

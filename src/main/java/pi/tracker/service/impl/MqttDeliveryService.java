@@ -6,7 +6,7 @@ import org.apache.commons.lang3.SerializationUtils;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import pi.tracker.config.MqttDeliveryProperties;
-import pi.tracker.dto.PiSensorHubMetric;
+import pi.tracker.dto.DockerPiSensorHubMetric;
 import pi.tracker.mqtt.PahoPiTrackerMqttClient;
 import pi.tracker.mqtt.PiTrackerMqttClient;
 import pi.tracker.service.MetricDeliverer;
@@ -37,6 +37,7 @@ public class MqttDeliveryService implements MetricDeliverer {
         this.deliveryProperties = mqttDeliveryProperties;
     }
 
+    @Deprecated
     public void deliver(Map<String, Integer> sensorData) throws DeliveryException {
         log.debug("Starting to deliver sensor data");
         for (Map.Entry<String, Integer> sd : sensorData.entrySet()) {
@@ -60,7 +61,7 @@ public class MqttDeliveryService implements MetricDeliverer {
     }
 
     @Override
-    public void deliver(PiSensorHubMetric metric) throws DeliveryException {
+    public void deliver(DockerPiSensorHubMetric metric) throws DeliveryException {
         log.debug("Starting to deliver metric");
 
         MqttMessage mqttMessage = new MqttMessage(SerializationUtils.serialize(metric));

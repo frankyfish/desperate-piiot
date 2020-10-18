@@ -5,10 +5,7 @@ import com.pi4j.io.i2c.I2CFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import pi.tracker.dockerpi.FakeI2CConnector;
-import pi.tracker.dockerpi.FakeI2CDevice;
-import pi.tracker.dockerpi.I2CConnector;
-import pi.tracker.dockerpi.SensorHub;
+import pi.tracker.dockerpi.*;
 import pi.tracker.service.exceptions.DeliveryException;
 import pi.tracker.service.impl.SensorHubServiceImpl;
 
@@ -24,11 +21,12 @@ public class SensorHubServiceImplTest {
     private I2CDevice i2CDevice = new FakeI2CDevice();
     private MetricDeliverer metricDeliverer = mock(MetricDeliverer.class);
     private SensorHub sensorHub = new SensorHub();
+    private SensorDataCollector sensorDataCollector = new FakeSensorDataCollector();
 
     @BeforeEach
     public void setUp() throws IOException, I2CFactory.UnsupportedBusNumberException {
         I2CConnector connector = new FakeI2CConnector(i2CDevice);
-        this.sensorHubService = new SensorHubServiceImpl(metricDeliverer, connector, sensorHub);
+        this.sensorHubService = new SensorHubServiceImpl(sensorDataCollector, metricDeliverer);
     }
 
     @Disabled("testing logic is outdated") // fixme: rewrite this test

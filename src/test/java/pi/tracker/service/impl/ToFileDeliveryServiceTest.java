@@ -1,10 +1,9 @@
 package pi.tracker.service.impl;
 
 import com.google.gson.Gson;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
-import pi.tracker.dto.PiSensorHubMetric;
+import pi.tracker.dto.DockerPiSensorHubMetric;
 import pi.tracker.service.exceptions.DeliveryException;
 
 import java.io.IOException;
@@ -36,7 +35,7 @@ public class ToFileDeliveryServiceTest {
     @Test
     public void testWritingToFile() throws DeliveryException, IOException {
         // GIVEN metric from board has arrived
-        PiSensorHubMetric testMetric = PiSensorHubMetric.builder()
+        DockerPiSensorHubMetric testMetric = DockerPiSensorHubMetric.builder()
                 .airPressureSensor(2.0)
                 .airPressureTemperature(12.0)
                 .human(1)
@@ -52,7 +51,7 @@ public class ToFileDeliveryServiceTest {
         // THEN expecting file to exist
         boolean fileExists = Files.exists(Path.of(FILE_FULL_PATH));
         assertThat(fileExists).isTrue();
-        List<PiSensorHubMetric> metricsFromFile = readFromMetricsFile();
+        List<DockerPiSensorHubMetric> metricsFromFile = readFromMetricsFile();
         // AND expecting file to contain exactly one line
         assertThat(metricsFromFile.size()).isEqualTo(1);
         // AND expecting metric to be the same
@@ -62,7 +61,7 @@ public class ToFileDeliveryServiceTest {
     @Test
     public void testWritingMultipleMetricsToFile() throws DeliveryException, IOException {
         // GIVEN metrics from board has arrived
-        PiSensorHubMetric testMetric = PiSensorHubMetric.builder()
+        DockerPiSensorHubMetric testMetric = DockerPiSensorHubMetric.builder()
                 .airPressureSensor(2.0)
                 .airPressureTemperature(12.0)
                 .human(1)
@@ -72,7 +71,7 @@ public class ToFileDeliveryServiceTest {
                 .externalTemperatureSensor(12.0)
                 .build();
 
-        PiSensorHubMetric metric1 = PiSensorHubMetric.builder()
+        DockerPiSensorHubMetric metric1 = DockerPiSensorHubMetric.builder()
                 .airPressureSensor(2.0)
                 .airPressureTemperature(12.0)
                 .human(1)
@@ -82,7 +81,7 @@ public class ToFileDeliveryServiceTest {
                 .externalTemperatureSensor(12.0)
                 .build();
 
-        PiSensorHubMetric metric2 = PiSensorHubMetric.builder()
+        DockerPiSensorHubMetric metric2 = DockerPiSensorHubMetric.builder()
                 .airPressureSensor(2.0)
                 .airPressureTemperature(12.0)
                 .human(1)
@@ -92,7 +91,7 @@ public class ToFileDeliveryServiceTest {
                 .externalTemperatureSensor(22.0)
                 .build();
 
-        List<PiSensorHubMetric> testMetrics = Arrays.asList(testMetric, metric1, metric2);
+        List<DockerPiSensorHubMetric> testMetrics = Arrays.asList(testMetric, metric1, metric2);
 
         // WHEN calling service each to write to file
         ToFileDeliveryService toFileDeliveryService = new ToFileDeliveryService();
@@ -106,7 +105,7 @@ public class ToFileDeliveryServiceTest {
         // THEN expecting file to exist
         boolean fileExists = Files.exists(Path.of(FILE_FULL_PATH));
         assertThat(fileExists).isTrue();
-        List<PiSensorHubMetric> metricsFromFile = readFromMetricsFile();
+        List<DockerPiSensorHubMetric> metricsFromFile = readFromMetricsFile();
         // AND expecting file to contain orginal number of metrics
         assertThat(metricsFromFile.size()).isEqualTo(testMetrics.size());
         // AND expecting metric to be the same
@@ -115,12 +114,12 @@ public class ToFileDeliveryServiceTest {
         });
     }
 
-    private List<PiSensorHubMetric> readFromMetricsFile() throws IOException {
-        List<PiSensorHubMetric> metricsFromFile = new ArrayList<>();
+    private List<DockerPiSensorHubMetric> readFromMetricsFile() throws IOException {
+        List<DockerPiSensorHubMetric> metricsFromFile = new ArrayList<>();
         // reading file
         try (Stream<String> linesStream = Files.lines(Paths.get(FILE_FULL_PATH))) {
             linesStream.forEach(line -> {
-                metricsFromFile.add(new Gson().fromJson(line, PiSensorHubMetric.class));
+                metricsFromFile.add(new Gson().fromJson(line, DockerPiSensorHubMetric.class));
             });
         }
         return metricsFromFile;
